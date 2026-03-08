@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-hii good morning 
-=======
-hii good morning 
->>>>>>> 6e2af8d68fb02087fa2657faf646916600bd5f14
+hii good morning1 
+
