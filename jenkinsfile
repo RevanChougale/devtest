@@ -1,0 +1,23 @@
+node{
+    stage('Git-Clone'){
+        git branch: 'main', credentialsId: 'git-cred', url: 'https://github.com/RevanChougale/devtest.git' 
+    }
+    stage('maven-build'){
+        sh 'mvn clean package'
+    }
+stage('SonarQube Analysis') {
+    withSonarQubeEnv('Sonar-Server-9.9.3') { // Jenkins Sonar server name
+    sh '/usr/share/maven/bin/mvn sonar:sonar -Dsonar.projectKey=devtest -Dsonar.projectName=devtest'
+        }
+    
+}
+stage('Nexus Upload') {
+nexusArtifactUploader artifacts: [[artifactId: 'myapp1', classifier: '', file: 'target/myapp1.war', type: 'war']], credentialsId: 'nexus-cred', groupId: 'com.rc', nexusUrl: '52.66.195.218:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-snapshots', version: '1.0-SNAPSHOT'
+}
+
+stage('deploy to tomcat'){
+
+    deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'credtom', path: '', url: 'http://52.66.54.177:8080/manager/text')], contextPath: '/myapp1', war: 'target/myapp1.war'
+}
+    
+}
